@@ -1,35 +1,120 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { useArtworks } from "./hooks/useArtworks";
+import { useAuth } from "./context/AuthContext";
+import ArtworkForm from "./components/ArtworkForm";
+import ArtworkGrid from "./components/ArtworkGrid";
+import ArtworkModal from "./components/ArtworkModal";
+import LoginForm from "./components/LoginForm";
+import Header from "./components/Header";
+import MobileMenu from "./components/MobileMenu";
+import Footer from "./components/Footer";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { isAdmin } = useAuth();
+  // Hook
+  const {
+    artworks,
+    filteredArtworks,
+    loading,
+    error,
+    searchTerm,
+    setSearchTerm,
+    artworksToShow,
+    handleLoadMore,
+    handleArtworkAdded,
+    handleArtworkDeleted,
+    hasMore,
+  } = useArtworks();
+
+  // Local UI states
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [artworkToEdit, setArtworkToEdit] = useState(null);
+  const [selectedArtwork, setSelectedArtwork] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  if (loading) return <div className="loader">Chargement...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
+    // Overlays rendered outside the main div (Artwork Modal, Create and Update Form, Mobile Menu)
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <ArtworkModal
+        artwork={selectedArtwork}
+        onClose={() => setSelectedArtwork(null)}
+      />
+
+      {showLogin && <LoginForm onClose={() => setShowLogin(false)} />}
+
+      {(isFormOpen || artworkToEdit) && (
+        <ArtworkForm
+          initialData={artworkToEdit}
+          onArtworkAdded={(newArt) => {
+            handleArtworkAdded(newArt);
+            setIsFormOpen(false);
+            setArtworkToEdit(null);
+          }}
+          onClose={() => {
+            setIsFormOpen(false);
+            setArtworkToEdit(null);
+          }}
+        />
+      )}
+
+      {isMobileMenuOpen && (
+        <MobileMenu
+          onClose={() => setIsMobileMenuOpen(false)}
+          onAddClick={() => setIsFormOpen(true)}
+          onLoginClick={() => setShowLogin(true)}
+        />
+      )}
+
+      <div className="flex min-h-screen flex-col">
+        <Header
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          onAddClick={() => setIsFormOpen(true)}
+          onLoginClick={() => setShowLogin(true)}
+          isMenuOpen={isMobileMenuOpen}
+          onMenuOpen={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        />
+
+        <main className="mx-auto w-full max-w-6xl grow p-5">
+          {searchTerm ? (
+            <p className="mb-6">
+              <b>{filteredArtworks.length}</b> result
+              {filteredArtworks.length !== 1 && "s"} for "{searchTerm}"
+            </p>
+          ) : (
+            <p className="mb-6">
+              <b>{artworks.length}</b> artworks
+            </p>
+          )}
+
+          <ArtworkGrid
+            artworks={artworksToShow}
+            onViewDetails={setSelectedArtwork}
+            onDelete={(id) =>
+              handleArtworkDeleted(id, () => {
+                if (selectedArtwork?._id === id) setSelectedArtwork(null);
+              })
+            }
+            onUpdate={setArtworkToEdit}
+            isAdmin={isAdmin}
+          />
+
+          {hasMore && (
+            <div className="mt-12 mb-8 flex justify-center">
+              <button onClick={handleLoadMore} className="button-standard">
+                Show More
+              </button>
+            </div>
+          )}
+        </main>
+        <Footer />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

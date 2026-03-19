@@ -1,1 +1,66 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Lato", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cormorant Garamond", serif;
+
+  --color-main-bg: var(--color-neutral-50);
+  --color-main-surface: var(--color-neutral-100);
+  --color-main-logo: var(--color-neutral-800);
+  --color-main-border: var(--color-neutral-300);
+  --color-main-hover: var(--color-neutral-500);
+  --color-main-text: var(--color-neutral-900);
+  --color-main-text-secondary: var(--color-neutral-600);
+
+  --color-dark-bg: var(--color-neutral-900);
+  --color-dark-surface: var(--color-neutral-800);
+  --color-dark-logo: var(--color-neutral-100);
+  --color-dark-border: var(--color-neutral-600);
+  --color-dark-hover: var(--color-neutral-400);
+  --color-dark-text-main: var(--color-neutral-50);
+  --color-dark-text-secondary: var(--color-neutral-100);
+  --color-dark-text-tertiary: var(--color-neutral-200);
+
+  --color-art-container: var(--color-black);
+
+  --animate-fade-in: fade-in 0.2s ease-out;
+
+  /*Modale animation */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-main-bg text-main-text transition-colors duration-300;
+  }
+  .dark body {
+    @apply bg-dark-bg text-dark-text-main transition-colors duration-300;
+  }
+}
+
+@layer components {
+  .input-standard {
+    @apply bg-main-surface dark:bg-dark-surface border-main-border dark:border-dark-border hover:border-main-hover dark:hover:border-dark-hover rounded-sm border px-4 py-2 text-sm transition-colors outline-none;
+  }
+  .button-standard {
+    @apply bg-main-surface dark:bg-dark-surface border-main-border dark:border-dark-border hover:border-main-hover dark:hover:border-dark-hover cursor-pointer rounded-sm border px-4 py-2 text-sm tracking-widest transition-all duration-200 active:scale-95 active:shadow-inner;
+  }
+
+  .button-close {
+    @apply text-main-text flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-black/10 text-xl font-bold backdrop-blur-sm transition-all duration-200 hover:bg-black/20 active:scale-90 dark:bg-white/20 dark:text-white dark:hover:bg-white/40;
+  }
+  .modal-animate {
+    @apply animate-fade-in;
+  }
+}

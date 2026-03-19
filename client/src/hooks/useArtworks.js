@@ -1,0 +1,76 @@
+import { useState, useEffect } from "react";
+import { getAllArtworks, deleteArtwork } from "../services/artService";
+
+export const useArtworks = () => {
+  const [artworks, setArtworks] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [visibleCount, setVisibleCount] = useState(8);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAllArtworks = async () => {
+      try {
+        const data = await getAllArtworks();
+        setArtworks(data);
+      } catch (err) {
+        setError("Failed to fetch artworks. Please try again later.");
+        console.error("API Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllArtworks();
+  }, []);
+
+  // Handles both create and update
+  const handleArtworkAdded = (updatedOrCreated) => {
+    setArtworks((prevArtworks) => {
+      const exists = prevArtworks.find(
+        (art) => art._id === updatedOrCreated._id,
+      );
+      if (exists) {
+        return prevArtworks.map((art) =>
+          art._id === updatedOrCreated._id ? updatedOrCreated : art,
+        );
+      }
+      // Add new artwork at the top of the grid
+      return [updatedOrCreated, ...prevArtworks];
+    });
+  };
+
+  const handleArtworkDeleted = async (id) => {
+    if (window.confirm("Are you sure you want to delete the artwork?")) {
+      try {
+        await deleteArtwork(id);
+        setArtworks((prev) => prev.filter((art) => art._id !== id));
+      } catch (error) {
+        console.error("Deletion error:", error);
+        alert("The artwork cannot be deleted..");
+      }
+    }
+  };
+
+  const filteredArtworks = artworks.filter((art) => {
+    const search = searchTerm.toLowerCase();
+    return (
+      art.title.toLowerCase().includes(search) ||
+      art.artist.toLowerCase().includes(search)
+    );
+  });
+
+  return {
+    artworks,
+    loading,
+    error,
+    searchTerm,
+    setSearchTerm,
+    filteredArtworks,
+    artworksToShow: filteredArtworks.slice(0, visibleCount),
+    handleLoadMore: () => setVisibleCount((prev) => prev + 8),
+    handleArtworkAdded,
+    handleArtworkDeleted,
+    hasMore: visibleCount < filteredArtworks.length,
+  };
+};

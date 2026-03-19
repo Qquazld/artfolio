@@ -1,9 +1,9 @@
 import Art from "../models/Art.js";
 import mongoose from "mongoose";
 
-// @Description: READ all artworks
-// @Route: GET /api/art
-// @Access: Public
+// @description: READ all artworks
+// @route: GET /api/art
+// @access: Public
 export const getAllArt = async (req, res) => {
   try {
     const artworks = await Art.find().sort({ createdAt: -1 });
@@ -13,16 +13,14 @@ export const getAllArt = async (req, res) => {
   }
 };
 
-// @Description: CREATE a new artwork
-// @Route: POST /api/art
-// @Access: Private
+// @description: CREATE a new artwork
+// @route: POST /api/art
+// @access: Private
 export const createArt = async (req, res) => {
   const { title, artist, description, imageUrl, year } = req.body;
 
-  if (!title || !artist || !imageUrl) {
-    return res
-      .status(400)
-      .json({ message: "Title, artist and imageUrl are required." });
+  if (!title || !artist) {
+    return res.status(400).json({ message: "Title and artist are required." });
   }
 
   try {
@@ -90,7 +88,7 @@ export const updateArtbyId = async (req, res) => {
   try {
     const updatedArt = await Art.findByIdAndUpdate(id, req.body, {
       new: true,
-      runValidators: true,
+      runValidators: true, // enforces schema validation on update
     });
     if (!updatedArt)
       return res.status(404).json({ message: "Artwork not found." });

@@ -6,23 +6,28 @@ import {
   deleteArtbyId,
   updateArtbyId,
 } from "../controllers/artController.js";
+import auth from "../middleware/auth.js";
 
-// Création d'une instance de Router Express
 const router = express.Router();
 
-// Route GET /api/art/
+// @route GET /api/art/
+// @access Public
 router.get("/", getAllArt);
 
-// Route POST /api/art/
-router.post("/", createArt);
+// @route POST /api/art/
+// @access Private
+router.post("/", auth, createArt);
 
-// Route GET by ID
+// @route GET by ID /api/art/:id
+// @access Public
 router.get("/:id", getArtbyId);
 
-// Route DELETE by ID
-router.delete("/:id", deleteArtbyId);
+// @route DELETE by ID /api/art/:id
+// @access Private
+router.delete("/:id", auth, deleteArtbyId);
 
-// Route UPDATE by ID
-router.patch("/:id", updateArtbyId);
+// @route UPDATE by ID /api/art/:id
+// @access Private
+router.patch("/:id", auth, updateArtbyId);
 
 export default router;

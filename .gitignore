@@ -16,3 +16,5 @@ dist-ssr
 
 # Fichiers et dossiers d'éditeurs (VSCode, JetBrains, etc.)
 .DS_Store
+
+requests.http
