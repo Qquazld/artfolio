@@ -7,6 +7,7 @@ export const useArtworks = () => {
   const [visibleCount, setVisibleCount] = useState(8);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [artworkToDelete, setArtworkToDelete] = useState(null);
 
   useEffect(() => {
     const fetchAllArtworks = async () => {
@@ -40,15 +41,19 @@ export const useArtworks = () => {
     });
   };
 
-  const handleArtworkDeleted = async (id) => {
-    if (window.confirm("Are you sure you want to delete the artwork?")) {
-      try {
-        await deleteArtwork(id);
-        setArtworks((prev) => prev.filter((art) => art._id !== id));
-      } catch (error) {
-        console.error("Deletion error:", error);
-        alert("The artwork cannot be deleted..");
-      }
+  const requestDelete = (id) => {
+    setArtworkToDelete(id);
+  };
+
+  // Called when user confirms deletion in ConfirmDialog
+  const confirmDelete = async () => {
+    try {
+      await deleteArtwork(artworkToDelete);
+      setArtworks((prev) => prev.filter((art) => art._id !== artworkToDelete));
+    } catch (error) {
+      console.error("Deletion error:", error);
+    } finally {
+      setArtworkToDelete(null);
     }
   };
 
@@ -70,7 +75,10 @@ export const useArtworks = () => {
     artworksToShow: filteredArtworks.slice(0, visibleCount),
     handleLoadMore: () => setVisibleCount((prev) => prev + 8),
     handleArtworkAdded,
-    handleArtworkDeleted,
+    artworkToDelete,
+    requestDelete,
+    confirmDelete,
+    cancelDelete: () => setArtworkToDelete(null),
     hasMore: visibleCount < filteredArtworks.length,
   };
 };

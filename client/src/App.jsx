@@ -8,6 +8,7 @@ import LoginForm from "./components/LoginForm";
 import Header from "./components/Header";
 import MobileMenu from "./components/MobileMenu";
 import Footer from "./components/Footer";
+import ConfirmDialog from "./components/ConfirmDialog";
 
 function App() {
   const { isAdmin } = useAuth();
@@ -22,7 +23,10 @@ function App() {
     artworksToShow,
     handleLoadMore,
     handleArtworkAdded,
-    handleArtworkDeleted,
+    artworkToDelete,
+    requestDelete,
+    confirmDelete,
+    cancelDelete,
     hasMore,
   } = useArtworks();
 
@@ -69,6 +73,17 @@ function App() {
         />
       )}
 
+      {artworkToDelete && (
+        <ConfirmDialog
+          onConfirm={() => {
+            confirmDelete();
+            if (selectedArtwork?._id === artworkToDelete)
+              setSelectedArtwork(null);
+          }}
+          onClose={cancelDelete}
+        />
+      )}
+
       <div className="flex min-h-screen flex-col">
         <Header
           searchTerm={searchTerm}
@@ -94,11 +109,7 @@ function App() {
           <ArtworkGrid
             artworks={artworksToShow}
             onViewDetails={setSelectedArtwork}
-            onDelete={(id) =>
-              handleArtworkDeleted(id, () => {
-                if (selectedArtwork?._id === id) setSelectedArtwork(null);
-              })
-            }
+            onDelete={requestDelete}
             onUpdate={setArtworkToEdit}
             isAdmin={isAdmin}
           />
