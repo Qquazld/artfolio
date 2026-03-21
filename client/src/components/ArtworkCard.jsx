@@ -21,13 +21,13 @@ const ArtworkCard = ({
       </div>
 
       <div className="p-3 text-center">
-        <h3 className="font-display text-main-text dark:text-dark-text-main truncate text-xl font-semibold">
-          {artwork.artist}
+        <h3 className="font-display text-main-text dark:text-dark-text-main truncate text-xl font-semibold italic">
+          {artwork.title}
         </h3>
 
         <div className="mt-1 flex items-center justify-center gap-2">
           <p className="text-main-text dark:text-dark-text-main text-sm font-medium">
-            {artwork.title}
+            {artwork.artist}
           </p>
         </div>
 

@@ -25,11 +25,11 @@ const ArtworkModal = ({ artwork, onClose }) => {
         </div>
         <div className="flex flex-col gap-2 pt-4 pb-4 text-center">
           <div>
-            <h2 className="font-display text-main-text dark:text-dark-text-main text-2xl font-semibold">
-              {artwork.artist}
+            <h2 className="font-display text-main-text dark:text-dark-text-main text-2xl font-semibold italic">
+              {artwork.title}
             </h2>
             <p className="font-display text-main-text dark:text-dark-text-main mt-1 text-xl font-semibold">
-              {artwork.title}
+              {artwork.artist}
             </p>
             <p className="text-main-text-secondary dark:text-dark-text-tertiary mt-2 text-base leading-relaxed">
               {artwork.year && (
