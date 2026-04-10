@@ -20,7 +20,7 @@ Built with React, Node/Express, and MongoDB.
 
 ## Getting Started
 
-**Prerequisites** — Node.js, MongoDB Atlas account
+Note: This project is presented in read-only mode. Admin features (CRUD operations) are not accessible in this version.
 
 **Clone the repo**
 git clone https://github.com/qquazld/artfolio.git
@@ -29,16 +29,9 @@ git clone https://github.com/qquazld/artfolio.git
 cd client && npm install
 cd server && npm install
 
-**Environment variables**
-
-client/.env
-VITE_API_URL=http://localhost:3000/api/art
-VITE_API_BASE_URL=http://localhost:3000/api
-
-server/.env
-MONGO_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-
 **Run the app**
-cd server && node index.js
+
+You need to run both client and server in separate terminals :
+
+cd server && npm run start
 cd client && npm run dev
