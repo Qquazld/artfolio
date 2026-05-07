@@ -1,5 +1,7 @@
 # Artfolio
 
+![Preview](client/src/assets/Artfolio.webp)
+
 A fullstack art gallery app
 Built with React, Node/Express, and MongoDB.
 
